@@ -1,0 +1,19 @@
+<?php
+include(conexion.php");
+$nombres = $_POST['nombre']
+$apellidos=$_POST['apellido'] 
+$direcciones= $_POST['direccion']
+$cedulas = $_POST['cedula']
+$celulares= $_POST['celular']
+$telefonos= $_POST['telefono']
+
+ $query ="insert into registro usuarios(nombre,apellido,correo,telefono,celular,cedula,direccion)
+values ('$nombres','$apellido','$direcciones','$cedulas', '$celular','$telefono',)";
+
+$resultado=$conexion->query($query);
+if($resultado)
+{echo "INGRESO DATOS";}
+else
+{echo "NO INGRESO DATOS";}
+
+?>
