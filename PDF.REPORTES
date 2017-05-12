@@ -1,0 +1,60 @@
+<?php
+
+
+include('includes/class.conexion.php');
+
+ $html_reporte ='
+<table width="100%" border="1" cellspacing="0" cellpadding="0" bordercolor="#000" >
+  <thead >
+  <tr>
+           <th > id</th>
+           <th > nombre</th>
+           <th>precio</th>
+           <th>caracteristicas</th>
+           <th>descripcion</th>
+
+  </tr>
+    </thead>';
+
+
+  $db = new conexion();
+  if (mysqli_connect_errno()) {
+  printf("Connect failed: %s\n", mysqli_connect_error());
+  exit();
+}
+  $registro = $db->query("SELECT * FROM productos ");
+  while ($registro2 = $db->recorrer($registro)) {
+
+   $html_reporte .= '
+
+          <tr>
+          <td >'.$registro2['producto_id'].'</td>
+          <td >'.$registro2['nombre'].'</td>
+          <td >$'.$registro2['precio'].'</td>
+          <td >'.$registro2['caracteristicas'].'</td>
+          <td >'.$registro2['descripcion'].'</td>
+
+    </tr>';
+  }
+
+  $html_reporte .= '</tbody>
+ </table>
+ </body>
+ </html>';
+
+
+  require_once('dompdf/dompdf_config.inc.php');
+  $html_reporte=utf8_encode($html_reporte);
+ $dompdf=new DOMPDF();
+ $dompdf->load_html($html_reporte);
+ ini_set("memory_limit","128M");
+ $dompdf->render();
+ $dompdf->stream("Reporte_tabla_productos .pdf");
+
+ header('reporte.php');
+
+
+
+
+
+?>
