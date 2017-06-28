@@ -1,0 +1,190 @@
+<?php
+include(HTML_DIR. 'overal/header.php');
+?>
+ <body>
+ <section class="engine"><a rel="nofollow" href="#"><?php echo APP_TITLE ?></a></section>
+
+ <?php include(HTML_DIR . '/overal/topnav.php'); ?>
+
+ <section class="mbr-section mbr-after-navbar">
+ <div class="mbr-section__container container mbr-section__container--isolated">
+
+   <?php
+   if(isset($_GET['success'])) {
+     echo '<div class="alert alert-dismissible alert-success">
+       <strong>Realizado:</strong> El producto se a borrado correctamente
+     </div>';
+   }
+
+   ?>
+
+ <div class="row container">
+    <div class="pull-right">
+      <div class="mbr-navbar__column"><ul class="mbr-navbar__items mbr-navbar__items--right mbr-buttons mbr-buttons--freeze mbr-buttons--right btn-inverse mbr-buttons--active"><li class="mbr-navbar__item">
+           <a class="mbr-buttons__btn btn btn-danger " href="?view=configproductos"> PRODUCTOS</a>
+       </li></ul></div>
+       <div class="mbr-navbar__column"><ul class="mbr-navbar__items mbr-navbar__items--right mbr-buttons mbr-buttons--freeze mbr-buttons--right btn-inverse mbr-buttons--active"><li class="mbr-navbar__item">
+           <a class="mbr-buttons__btn btn btn-danger" <?php echo 'href="?view=perfil&id='.$_SESSION['app_id'].'"'?>>PERFIL</a>
+       </li></ul></div>
+        <div class="mbr-navbar__column"><ul class="mbr-navbar__items mbr-navbar__items--right mbr-buttons mbr-buttons--freeze mbr-buttons--right btn-inverse mbr-buttons--active"><li class="mbr-navbar__item">
+            <a class="mbr-buttons__btn btn btn-danger active" href="?view=carrito">CARRITO DE COMPRAS</a>
+        </li></ul></div>
+
+      </div>
+
+     <ol class="breadcrumb">
+       <li><a href="?view=index"><i class="fa fa-comments"></i> carrito</a></li>
+     </ol>
+ </div>
+
+ <div class="container">
+     <div class="row">
+         <div class="well col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3">
+             <div class="row">
+                 <div class="col-xs-6 col-sm-6 col-md-6">
+                     <address>
+                         <strong><?php echo APP_TITLE; ?></strong>
+                         <br>
+                         <?php echo $_users[$_SESSION['app_id']]['nombre']; ?>
+                         <br>
+                         Bogota DC.
+                         <br>
+                         <abbr title="Phone">P:</abbr> (213) 484-6829
+                     </address>
+                 </div>
+                 <div class="col-xs-6 col-sm-6 col-md-6 text-right">
+                     <p>
+                         <em><?php echo date('d/m/Y',time()); ?></em>
+                     </p>
+                     <p>
+                         <em><?php echo  APP_COPY; ?></em>
+                     </p>
+                 </div>
+             </div>
+             <div class="row">
+                 <div class="text-center">
+                    <?php echo '<img src="views/app/images/users/'.$_users[$_SESSION['app_id']]['img'].'"  alt="allytees-500-trans.png" width="180" height="180"/>'  ?>
+                     <h1>Carrito de compras</h1>
+                 </div>
+                 </span>
+           <?php
+       $carro = $carrito->get_content();
+          if($carro)
+          {
+            $HTML = '
+           <table class="table table-hover">
+               <thead>
+                   <tr>
+               <th >Producto</th>
+               <th >#Id</th>
+               <th class="text-center">Cantidad articulos</th>
+               <th class="text-center">Precio</th>
+               <th class="text-center">Aciones</th>
+                 </tr>
+                 </thead>';
+          foreach($carro as $producto)
+          {
+
+           $HTML .= ' <tbody>
+                <tr>
+                    <td class="col-md-1 text-left"><em>'. ucwords($producto["nombre"]).'</em></h4></td>
+                    <td class="col-md-1 text-center" > <a href="productos/'.UrlAmigable($producto["id"],$_productos[$producto["id"]]['nombre']).'"><i class="glyphicon glyphicon-tag">
+                    </i>'.$producto["id"].'  </a></td>
+                    <td class="col-md-1 text-center">#'.$producto["cantidad"].'</td>
+                    <td class="col-md-1 text-center"><i class="glyphicon glyphicon-usd"></i> '.number_format($producto["precio"],0,',','.').'</td>
+                <td class="col-md-5 text-center" >
+                     <div class="btn-group">
+                      <a href="#" class="btn btn-danger dropdown-toggle btn-sm" data-toggle="dropdown">Acciones</a>
+                      <a href="#" class="btn btn-danger dropdown-toggle btn-sm" data-toggle="dropdown"><span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                         <li><a  onclick="Delete(\'¿Está seguro de eliminar este producto?\',\'?view=carrito&mode=delete&eliminar='.$producto['unique_id'].'\')">Eliminar</a></li>
+                      </ul>
+                    </div>
+                   </td>
+                </tr>';
+         }
+     $HTML .= '
+          <td>   </td>
+          <td>   </td>
+          <td  class="col-md-3 text-right">
+          <p>
+              <strong>Cantidad de productos: </strong>
+          </p>
+        </td>
+          <td class="text-center">
+          <p>
+              <strong><span class="glyphicon glyphicon-shopping-cart"></span>
+            <i class="text-danger">  '.  $carrito->articulos_total().'  </i></strong>
+          </p>
+          </td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>   </td>
+          <td>   </td>
+          <td class="  text-right"><h4><strong>Total: </strong></h4></td>
+          <td class="  text-center text-danger"><h4><strong><i class="glyphicon glyphicon-usd"></i>'. number_format($carrito->precio_total(),0,',','.') .'</strong></h4></td>
+            <td>   </td>
+      </tr>
+  </tbody>
+  </table>
+  <button type="button" class="btn btn-success btn-lg btn-block">
+      COMPRAR   <span class="glyphicon glyphicon-chevron-right"></span>
+  </button></td>
+</div>
+</div>
+</div>';
+
+     echo $HTML;
+   }else {
+     echo '<div class="alert alert-info" role="alert">No hay nada en el carrioto de compras</div>';
+   }
+
+
+             ?>
+    		<div class="paymentCont">
+    						<div class="headingWrap">
+    								<h3 class="headingTop text-center">Selecione EL Metodo De Pago</h3>
+
+    						</div>
+    						<div class="paymentWrap">
+    							<div class="btn-group paymentBtnGroup btn-group-justified" data-toggle="buttons">
+    					            <label class="btn paymentMethod active">
+    					            	<div class="method visa"></div>
+    					                <input type="radio" name="options" checked>
+    					            </label>
+    					            <label class="btn paymentMethod">
+    					            	<div class="method master-card"></div>
+    					                <input type="radio" name="options">
+    					            </label>
+    					            <label class="btn paymentMethod">
+    				            		<div class="method amex"></div>
+    					                <input type="radio" name="options">
+    					            </label>
+    					             <label class="btn paymentMethod">
+    				             		<div class="method vishwa"></div>
+    					                <input type="radio" name="options">
+    					            </label>
+    					            <label class="btn paymentMethod">
+    				            		<div class="method ez-cash"></div>
+    					                <input type="radio" name="options">
+    					            </label>
+            					        </div>
+            						</div>
+                      </div>
+                    </div>
+            </div>
+ </section>
+ <script>
+ function Delete(contenido,url) {
+   var action = window.confirm(contenido);
+   if (action) {
+       window.location = url;
+   }
+ }
+ </script>
+
+ <?php include(HTML_DIR . 'overal/footer.php'); ?>
+
+ </body>
+ </html>
